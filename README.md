@@ -1,8 +1,40 @@
 # SkillChain
 
-面向 **Cursor**、**Codex**、**OpenClaw**、**OpenCode** 等技能的供应链与生态分析。扫描本地已安装技能、构建依赖图，并支持健康检查、重叠检测与报告，优先离线运行。
+面向 **Cursor**、**Codex**、**OpenClaw**、**OpenCode** 等智能体的**技能**，用于分析本地技能供应链与生态。安装后直接对智能体说话即可（如「分析我的技能」「技能生态报告」），无需自己跑命令。
 
-Supply chain intelligence and ecosystem analysis for **Cursor**, **Codex**, **OpenClaw**, and **OpenCode** skills. Scan locally installed skills, build a dependency graph, and run health checks, overlap detection, and reports—offline-first.
+A **skill** for **Cursor**, **Codex**, **OpenClaw**, and **OpenCode** agents: supply chain and ecosystem analysis for locally installed skills. Install the skill, then ask your agent in natural language (e.g. “analyze my skills”, “ecosystem report”)—no need to run Python yourself.
+
+---
+
+## 安装 | Install
+
+按你使用的智能体选择一种方式安装本技能。  
+*Install the skill according to the agent you use.*
+
+| 智能体 Agent | 安装方式 How to install |
+|--------------|--------------------------|
+| **OpenClaw（小龙虾）** | 在 [Clawhub](https://clawhub.com) 搜索 **skill-chain** 安装；或直接对小龙虾说：「**安装 skill-chain 技能**」。<br>*Search for **skill-chain** on Clawhub to install, or tell 小龙虾: “安装 skill-chain 技能”.* |
+| **Cursor** | 将本仓库克隆到 Cursor 技能目录：<br>`git clone https://github.com/hyx-cn/skill-chain.git ~/.cursor/skills-cursor/skill-chain`<br>*Clone this repo into Cursor’s skills folder (see Cursor docs for the path).* |
+| **Codex** | 将本仓库克隆到 Codex 技能目录：<br>`git clone https://github.com/hyx-cn/skill-chain.git ~/.codex/skills/skill-chain`<br>若使用 `CODEX_HOME`：`git clone ... $CODEX_HOME/skills/skill-chain`<br>*Clone into `~/.codex/skills/skill-chain` or `$CODEX_HOME/skills/skill-chain`.* |
+| **OpenCode** | 将本仓库克隆到 OpenCode 技能目录：<br>`git clone https://github.com/hyx-cn/skill-chain.git ~/.opencode/skills/skill-chain`<br>*Clone into `~/.opencode/skills/skill-chain` (or your OpenCode skills path).* |
+
+安装完成后，在对话里用下面「怎么用」中的说法即可触发本技能。
+
+---
+
+## 怎么用 | How to use
+
+安装技能后，对智能体说下面任意一种（或类似意思），智能体会自动扫描、建图并给出分析或报告。  
+*After installing, ask your agent in natural language; it will run the skill and return analysis or reports.*
+
+- **「分析我的技能」** / “Analyze my skills”  
+- **「技能库存」「技能供应链」** / “Skill inventory”, “Skill supply chain”  
+- **「我的技能用了哪些包/工具」** / “What tools or packages do my skills use?”  
+- **「技能分类 / 生态 breakdown」** / “Skill categories”, “Ecosystem breakdown”  
+- **「技能健康度 / 有没有重叠」** / “Skill health”, “Overlapping skills”  
+- **「生成技能生态报告」** / “Ecosystem report”, “Full skill report”  
+
+更多触发词与行为对应见 [SKILL.md](SKILL.md)。
 
 ---
 
@@ -19,30 +51,10 @@ Supply chain intelligence and ecosystem analysis for **Cursor**, **Codex**, **Op
 
 ---
 
-## 快速开始 | Quick start
-
-```bash
-# 一键：重置 → 扫描 → 健康检查 → 重叠分析 → 报告
-# One-shot: reset, scan, health, overlaps, report
-python3 scripts/ingest.py analyze-all
-
-# 或分步执行 | Or step by step
-python3 scripts/ingest.py scan
-python3 scripts/analyze.py report
-```
-
-自定义扫描目录 / Override default paths:
-
-```bash
-python3 scripts/ingest.py analyze-all --dirs ~/.cursor/skills-cursor ~/.codex/skills
-```
-
----
-
 ## 默认扫描路径 | Default scan paths
 
-以下路径会按默认尝试，不存在的会跳过。  
-*These are tried by default; missing paths are skipped.*
+本技能会尝试扫描以下路径（不存在的会自动跳过）。  
+*These paths are tried by default; missing paths are skipped.*
 
 | 平台 Platform | 路径 Paths |
 |---------------|------------|
@@ -56,27 +68,37 @@ python3 scripts/ingest.py analyze-all --dirs ~/.cursor/skills-cursor ~/.codex/sk
 
 ---
 
-## 命令一览 | Commands
+## 高级：直接运行脚本 | Advanced: run scripts directly
+
+如需在本地自己跑（调试或二次开发），可在仓库根目录执行：  
+*To run the pipeline yourself (e.g. for debugging or development):*
+
+```bash
+# 一键：重置 → 扫描 → 健康检查 → 重叠分析 → 报告
+python3 scripts/ingest.py analyze-all
+
+# 自定义扫描目录
+python3 scripts/ingest.py analyze-all --dirs ~/.cursor/skills-cursor ~/.codex/skills
+```
 
 | 命令 Command | 说明 Description |
 |--------------|------------------|
-| `python3 scripts/ingest.py scan` | 发现技能并构建/更新图 · Discover skills and build/update graph |
-| `python3 scripts/ingest.py status` | 查看图摘要 · Show graph summary |
-| `python3 scripts/ingest.py reset` | 清空图 · Clear graph |
-| `python3 scripts/ingest.py enrich` | 拉取 Clawhub 元数据（可选） · Fetch Clawhub metadata (optional) |
-| `python3 scripts/ingest.py analyze-all` | 重置 + 扫描 + 健康 + 重叠 + 报告 · Reset + scan + health + overlaps + report |
-| `python3 scripts/analyze.py stats` | 数量、分类、热门包 · Counts, categories, top packages |
-| `python3 scripts/analyze.py health` | 各技能健康分 · Per-skill health scores |
-| `python3 scripts/analyze.py overlaps` | 重叠或重复技能 · Overlapping or duplicate skills |
-| `python3 scripts/analyze.py supply-chain --skill <slug>` | 某技能的完整供应链 · Full supply chain for a skill |
-| `python3 scripts/analyze.py report` | 生成完整 Markdown 报告 · Full markdown report |
+| `python3 scripts/ingest.py scan` | 发现技能并构建/更新图 |
+| `python3 scripts/ingest.py status` | 查看图摘要 |
+| `python3 scripts/ingest.py reset` | 清空图 |
+| `python3 scripts/ingest.py analyze-all` | 重置 + 扫描 + 健康 + 重叠 + 报告 |
+| `python3 scripts/analyze.py report` | 生成完整 Markdown 报告 |
+| `python3 scripts/analyze.py health` | 各技能健康分 |
+| `python3 scripts/analyze.py overlaps` | 重叠或重复技能 |
+| `python3 scripts/analyze.py supply-chain --skill <slug>` | 某技能的完整供应链 |
+
+更多子命令见 [SKILL.md](SKILL.md)。
 
 ---
 
 ## 数据与存储 | Data and storage
 
 - **输入 Input:** `SKILL.md` 前置元数据，`requirements.txt`、`pyproject.toml`、`package.json`，`scripts/*.py`（AST），`_meta.json` / `.clawhub/origin.json`。  
-  *`SKILL.md` frontmatter, `requirements.txt`, `pyproject.toml`, `package.json`, `scripts/*.py` (AST), `_meta.json` / `.clawhub/origin.json`.*
 - **输出 Output:** 图数据写入 `memory/skillchain/graph.jsonl`（追加式 JSONL）。该文件为本地数据，已通过 `.gitignore` 排除。  
   *Graph stored in `memory/skillchain/graph.jsonl` (append-only JSONL). This file is local and ignored via `.gitignore`.*
 
@@ -89,5 +111,4 @@ python3 scripts/ingest.py analyze-all --dirs ~/.cursor/skills-cursor ~/.codex/sk
 
 ## 许可 | License
 
-见仓库或技能元数据。  
-*See repository or skill metadata.*
+MIT · Copyright (c) 2025 hyx-cn · See [LICENSE](LICENSE).
